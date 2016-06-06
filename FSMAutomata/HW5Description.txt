@@ -1,0 +1,121 @@
+A finite state machine can be specified as:
+
+FiniteStateMachine { 
+    Set<int> nodes; 
+    int startNode; 
+    Set<int> goalNodes; 
+    List<Transition> transitions; 
+}
+
+Transition { 
+    int source; 
+    char transitionChar; 
+    int destination; 
+}
+
+e is represented by transitionChar == 0
+
+0) For each of the following, write the pseudocode before you write the code.
+
+1) Create a class CompiledNfaEpsilon class whose constructor takes an NFA-e represented 
+as a FiniteStateMachine struct, and which internally compiles it into a format that enables 
+efficient evaluation (as an NFA-e, not by converting it to a DFA) of strings to see if they are 
+recognized (O(nk) where n is the number of nodes in the NFA-e and k is the length of the 
+input string).  CompiledNfaEpsilon should have an instance method that takes an arbitrary 
+string and returns true if it is recognized by the FiniteStateMachine specification, and false if 
+it is not.
+
+2) As (1), create a CompiledDfa class whose constructor takes a FiniteStateMachine struct 
+representing a DFA, and the internal (compiled) representation should make use of the fact 
+that it is a DFA to evaluate input strings more efficiently (i.e. O(k) where k is the length of 
+the input string).
+
+3) Create a function that takes a FiniteStateMachine struct representing an NFA-e, and 
+returns a FiniteStateMachine struct representing an equivalent DFA.  To test your code, 
+evaluate the resulting DFA using CompiledDfa and the original NFA using 
+CompiledNfaEpsilon on a series of input strings.
+
+EX) a*b*c*
+
+NFA-e		e-closure				DFA
+
+{0, a, 0}	0 = {0,1,2}			{{0,1,2}, a, {0,1,2}}
+{0, e, 1}						{{0,1,2}, b, 
+{1, b, 1}
+{1, e, 2}
+{2, c, 2}
+
+NFA-e start = 0
+NFA-e goal = 2
+
+compute start state of DFA:
+// find e-closure of NFAe start node
+create an empty set to represent DFA start set
+insert NFA start node into set
+for each transition in transition list
+	if source node is in the set && char == epsilon
+		insert destination node into set
+
+compute additional states of DFA from a set of source nodes for a given transition char:
+//find the move set from the destination nodes of moves for the given set of source nodes
+create an empty set to represent the NFAe move set
+for each node in the source set
+	for each transition in transition list
+		if source == source && transitionChar == char
+			insert destination node into set
+// find the e-closure set of the move set of destinations
+create an empty set to represent DFA move set
+for each node in the move set
+	insert node into set
+	for each transition in transition list
+		if source node is in the set && char == epsilon
+			insert destination node into set
+
+
+1.	DFA start = e-closure( NFA-e start )
+2.	e-closure = set of states reachable from a given start state or set of start states
+		for each ..... fill in the algorithm
+3.	Move DFA == e-closure( Move NFA-e ) for any given char
+		this may result in a new state, or it may result in the starting state
+4.	For a given state of the DFA, new DFA states are defined by a Move DFA, step 3, for each char in the language 
+
+
+/*
+         for (setIt = DFAStart.begin(); setIt != DFAStart.end(); ++setIt) {
+            for (transIt = fSM.transitions.begin(); transIt != fSM.transitions.end(); 
+                  ++transIt) {
+               if ( *setIt == (*transIt).source
+                  && 
+                  (*transIt).transitionChar == currChar ) {
+                     NFAeMove.insert((*transIt).destination);
+               }
+            }
+         }
+         cout << endl << "move set..." << endl << endl;
+         for (setIt = NFAeMove.begin(); setIt != NFAeMove.end(); ++setIt) {
+            cout << "node = " << *setIt << endl;
+         }
+*/
+
+/*
+         setSize = 0;
+         for (setIt = NFAeMove.begin(); setIt != NFAeMove.end(); ++setIt)
+         {   
+            DFANewNode.insert(*setIt);
+            while ((int)DFANewNode.size() > setSize) {
+               setSize = DFANewNode.size();
+               for (transIt = fSM.transitions.begin(); transIt != fSM.transitions.end(); 
+                     ++transIt) {
+                  if ( (DFANewNode.find((*transIt).source) != DFANewNode.end()) 
+                     && 
+                     ((*transIt).transitionChar == epsilon) ) {
+                     DFANewNode.insert((*transIt).destination);
+                  }
+               }
+            }   
+         }
+         cout << endl << "new node set..." << endl << endl;
+         for (setIt = DFANewNode.begin(); setIt != DFANewNode.end(); ++setIt) {
+            cout << "node = " << *setIt << endl;
+         }
+*/

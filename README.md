@@ -1,2 +1,2 @@
 # Algorithms-FSM-Automata
-Some academic code written in C++ to explore trees, state machines, finite automata, formal languages, etc.
+This repo holds some code written in C++ to explore trees, state machines, finite automata, formal languages, etc.
